@@ -1,0 +1,23 @@
+
+textarea {
+    width: 700px;
+    height: 450px;
+    margin-left: 150px;
+}
+
+  
+label {
+    margin-left: 150px;
+  }
+
+#Open-file{
+
+position: absolute;
+opacity: 0;
+
+}
+
+#new-file , #save-file,#Analisis,#Reporte_1{
+position: absolute;
+opacity: 0;
+}
