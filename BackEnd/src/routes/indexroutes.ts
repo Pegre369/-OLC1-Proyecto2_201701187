@@ -1,4 +1,6 @@
 import {Router} from 'express';
+import {salidas} from'../Controllers/Salidas';
+
 
 class indexroutes{
 
@@ -11,7 +13,7 @@ class indexroutes{
 
     //utilizar router y apartir de esa propiedad defiinir mis rutas
     config():void{
-        this.router.get('/', (req, res)=> res.send('Hola'));
+        this.router.post('/prueba', salidas.index);
     }
 
 

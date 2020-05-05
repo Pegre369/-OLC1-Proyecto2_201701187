@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const Salidas_1 = require("../Controllers/Salidas");
 class indexroutes {
     constructor() {
         this.router = express_1.Router();
@@ -9,7 +10,7 @@ class indexroutes {
     }
     //utilizar router y apartir de esa propiedad defiinir mis rutas
     config() {
-        this.router.get('/', (req, res) => res.send('Hola'));
+        this.router.post('/prueba', Salidas_1.salidas.index);
     }
 }
 const indexrout = new indexroutes();
