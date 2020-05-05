@@ -1,60 +1,27 @@
-import express, {Application} from 'express';
-import indexroutes from './routes/indexroutes';
-import morgan from 'morgan';
+import express from 'express';
+import * as bodyparser from "body-parser";  
 import cors from 'cors';
 
+var app=express();
+app.use(bodyparser.json());
+app.use(cors());
+app.use(bodyparser.urlencoded({ extended: true }));
 
-class Server{
 
-    //Sirve para llamarla en otro lados
-    public app: Application;
+app.post('/Calcular/', function (req, res) {
+    var entrada=req.body.text;
+    var resultado = prueba(entrada);
+    res.send(resultado.toString());
+});
 
-    constructor() {
-    
-        //Para inicializarla con lo de express 
-       this.app = express();
 
-        //Para configurar app
-        this.config();
-        this.routes();
-    }
 
-    //Encargado de configurar el app
-    config():void{
-        this.app.set('port',3000);
+var server = app.listen(8080, function () {
+    console.log('Servidor escuchando en puerto 8080...');
+});
 
-        //sirve para ver las peticiones get post put delet
-        this.app.use(morgan('dev'));
-
-        //el servidor http puede pedir los datos a nuestro servidor 
-        this.app.use(cors());
-
-        //sirve aceptar formatos json de aplicaciones clientes
-        this.app.use(express.json());
-
-        //queremos enviar desde un formato html
-        this.app.use(express.urlencoded({extended:false}));
-
-    }
-
-    //Rutas de mi servidor
-    routes():void{
-        this.app.use(indexroutes);
-    }
-
-    //Inicializa el servidor
-    start():void{
-        this.app.listen(this.app.get('port'),()=>{
-
-            console.log('Server en el purto', this.app.get('port'))
-
-        });
-    }
-
+function prueba(texto:string){
+    var conect = texto;
+    return conect;
 }
 
-//Inicialiso mi servidor
-const server = new Server();
-
-//Llamo a mi metodo de inicio
-server.start();

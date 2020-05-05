@@ -50,7 +50,7 @@ function index(pestanias, pestania) {
 
     $(document).ready(function(){
         $(cpestanna).css('display','');
-        $(pestanna1).css('background','#19b43a');
+        $(pestanna1).css('background','#70DB93');
         $(pestanna1).css('padding-bottom','2px');
     });
 
@@ -192,3 +192,24 @@ function DescargarArchivo(){
         },0); 
     }
 }
+
+/*------------------------- Prueba de conexion -----------------------------------------------------*/
+
+function Conn(){
+
+    var ta = document.getElementById(get_vent());
+    var contenido = ta.value;
+    var url = "http://localhost:8080/Calcular/";
+
+    $.post(url,{text:contenido}, function(data,status){
+        
+        if (status.toString() == "success") {
+            alert("El resultado es: "+ data.toString());
+        }else{
+            alert("Error estado de conexion: "+ status);
+        }
+    
+    });
+
+
+}   

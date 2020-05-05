@@ -14,12 +14,20 @@
     </head>
     <body>
         <div class="contenedor">
+            
             <input id="fileInput" title="Abrir" type="file" size="50" onchange="AbrirArchivo(this.files)" class="btnp">
-            <button onclick="DescargarArchivo();" id="guardar" title="Guardar" class="btnp">Guardar</button>
-            <button onclick="agregar();" title="AgregarPestana" id="btn4" class="btnp">Agregar Pestana</button>
-            <button onclick="quitar();" title="QuitarPestana" id="btn5" class="btnp">Quitar Pestana</button>
-            <button onclick="" title="QuitarPestana" id="btn5" class="btnp">Analizar</button>
            
+        <div></br></div>
+
+            <div>   
+                <button onclick="DescargarArchivo();" id="guardar" title="Guardar" class="btnp">Guardar</button>
+                <button onclick="agregar();" title="AgregarPestana" id="btn4" class="btnp">Agregar Pestana</button>
+                <button onclick="quitar();" title="QuitarPestana" id="btn5" class="btnp">Quitar Pestana</button>
+                <button onclick="Conn()" title="QuitarPestana" id="btn5" class="btnp">Analizar</button>
+               
+            </div>
+
+
             <div id="pestanas">
                 <ul id=lista>
                 </ul>

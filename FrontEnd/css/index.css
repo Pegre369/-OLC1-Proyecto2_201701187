@@ -1,5 +1,5 @@
 body {
-    background: rgb(75, 8, 129);
+    background: #003333;
 }
 
 .ta {
@@ -8,7 +8,7 @@ body {
 
 .btnp {
     border: none;
-    background: #19b43a;
+    background: #70DB93;
     color: #f2f2f2;
     padding: 5px;
     font-size: 14px;
@@ -21,7 +21,7 @@ body {
 .contenedor{
     width: 1080px;
     margin: auto;
-    background:#1c6bbb;
+    background:#009999;
     color: rgb(0, 112, 163);
     padding: 20px 15px 50px 50px;
     border-radius: 10px;
@@ -54,7 +54,7 @@ body {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     border: 2px solid rgb(0, 112, 163);
-    border-bottom: #19b43a;
+    border-bottom: #70DB93;
     padding: 0px 20px 0px 20px;
 }
 
@@ -65,7 +65,7 @@ body {
 
 #contenidopestanas{
     clear: both;
-    background: #19b43a;
+    background: #70DB93;
     padding: 20px 0px 20px 20px;
     border-radius: 5px;
     border-top-left-radius: 0px;
