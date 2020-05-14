@@ -21,5 +21,11 @@ var Reporte_Errores = /** @class */ (function (_super) {
     Reporte_Errores.add = function (err) {
         this.prototype.push(err);
     };
+    Reporte_Errores.clear = function () {
+        while (this.prototype.length > 0) {
+            this.prototype.pop();
+        }
+    };
     return Reporte_Errores;
 }(Array));
+exports.Reporte_Errores = Reporte_Errores;

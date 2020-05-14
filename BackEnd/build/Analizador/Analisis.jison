@@ -1,104 +1,98 @@
-/*------------------------------------------IMPORTS------------------------------------------*/
 
 %{
+   
+%}
 
-    let Lista_Error = require('../build/Reportes/Reporte_Error')
-    let Nodo_Lista_Error = require('../build/Reportes/Nodo_Error')
-
-
-}%
-
-/*------------------------------------------Lexico------------------------------------------*/
 
 %lex
+
 %%
 
-    //Comentarios
+[ \r\t]+            {}
+\n                  {}
+
+"//".*   {};
+
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]    {};
+
+"int"       return 'tk_int';
+"double"    return 'tk_double';
+"boolean"   return 'tk_boolean';
+"char"      return 'tk_char';
+"String"    return 'tk_String';
+"class"     return 'tk_class';
+"import"    return 'tk_import';
+"if"        return 'tk_if';
+"else"      return 'tk_else';
+"switch"    return 'tk_switch';
+"case"      return 'tk_case';
+"break"     return 'tk_break';
+"default"   return 'tk_default';
+"while"     return 'tk_while';
+"do"        return 'tk_do';
+"for"       return 'tk_for';
+"continue"  return 'tk_continue';
+"return"    return 'tk_return';
+"main"      return 'tk_main';
+"System"    return 'tk_System';
+"out"       return 'tk_out';
+"print"     return 'tk_print';
+"println"   return 'tk_println';
+"void"      return 'tk_void';
+
+
+"+"         return 'tk_mas';
+"-"         return 'tk_menos';
+"*"         return 'tk_mult';
+"/"         return 'tk_div';
+"^"         return 'tk_eleva';
+"%"         return 'tk_porcen';
+"++"        return 'tk_incremento';
+"--"        return 'tk_decremento';
     
-    "//".*			// comentario simple
-    [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]	 //Comentario multilineas
 
+"=="        return 'tk_igualdad';
+"!="        return 'tk_distinto';
+">"         return 'tk_mayork';
+">="        return 'tk_mayorigualk';
+"<"         return 'tk_menork';
+"<="        return 'tk_menorigualk';
     
-    //Palabra Reservadas
-    "int"       return 'tk_int';
-    "double"    return 'tk_double';
-    "boolean"   return 'tk_boolean';
-    "char"      return 'tk_char';
-    "String"    return 'tk_String';
-    "class"     return 'tk_class';
-    "import"    return 'tk_import';
-    "if"        return 'tk_if';
-    "else"      return 'tk_else';
-    "switch"    return 'tk_switch';
-    "case"      return 'tk_case';
-    "break"     return 'tk_break';
-    "default"   return 'tk_default';
-    "while"     return 'tk_while';
-    "do"        return 'tk_do';
-    "for"       return 'tk_for';
-    "continue"  return 'tk_continue';
-    "return"    return 'tk_return';
-    "main"      return 'tk_main';
-    "System"    return 'tk_System';
-    "out"       return 'tk_out';
-    "print"     return 'tk_print';
-    "println"   return 'tk_println';
-    "void"      return 'tk_void';
 
-    //Operaciones Aritmeticas
-    "+"         return 'tk_mas';
-    "-"         return 'tk_menos;
-    "*"         return 'tk_mult';
-    "/"         return 'tk_div';
-    "^"         return 'tk_eleva';
-    "%"         return 'tk_porcen';
-    "++"        return 'tk_incremento';
-    "--"        return 'tk_decremento';
-    
-    //Operaciones Relacionales
-    "=="        return 'tk_igualdad';
-    "!="        return 'tk_distinto';
-    ">"         return 'tk_mayork';
-    ">="        return 'tk_mayorigualk';
-    "<"         return 'tk_menork';
-    "<="        return 'tk_menorigualk';
-    
-    //Operaciones Logicas
-    "&&"        return 'tk_and';
-    "||"        return 'tk_or';
-    "!"         return 'tk_not';
-
-    //Simbolos Extras
-    "{"         return 'tk_llaveabre';
-    "}"         return 'tk_llavecierra';
-    ";"         return 'tk_puntocoma';
-    "("         return 'tk_parentesisabre';
-    ")"         return 'tk_parentesiscierra';
-    ":"         return 'tk_dospuntos';
-    "."         return 'tk_punto';
-    ","         return 'tk_coma';
-    "="         return 'tk_igual';
+"&&"        return 'tk_and';
+"||"        return 'tk_or';
+"!"         return 'tk_not';
 
 
-    //ER's
-    [\t\r\n\f]                      %{ /*se ignoran*/ %}
-    \"[^\"]*\"                      %{ return 'tk_cadena'; %}
-    \'[^\']*\'                      %{ return 'tk_caracter'; %}
-    [a-zA-Z]+([a-zA-Z]|[0-9]|_)*    %{ return 'tk_id'; %}
-    (-)?[0-9]+("."[0-9]+)?\b  	    %{ return 'tk_digito'; %}
+"{"         return 'tk_llaveabre';
+"}"         return 'tk_llavecierra';
+";"         return 'tk_puntocoma';
+"("         return 'tk_parentesisabre';
+")"         return 'tk_parentesiscierra';
+":"         return 'tk_dospuntos';
+"."         return 'tk_punto';
+","         return 'tk_coma';
+"="         return 'tk_igual';
 
-    <<EOF>>     %{  return 'EOF';   %}
 
-    .           Lista_Error.Reporte_Errores.add(new Nodo_Lista_Error.Nodo_Error("Lexico","No se esperaba el caracter: "+yytext,yylineno))
+\"[^\"]*\"                       return 'tk_cadena';
+\'[^\']*\'                       return 'tk_caracter';
+[a-zA-Z]+([a-zA-Z]|[0-9]|_)*     return 'tk_id';
+(-)?[0-9]+("."[0-9]+)?\b  	     return 'tk_digito';
+
+<<EOF>>     return 'EOF';
+
+.           {console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column);}
 
 /lex
 
-/*------------------------------------------Sintactico------------------------------------------*/
+
 
 %star S
 %%
 
-S: IMPORTS CLASS
+S: IMPORTS CLASS EOF {console.log("terminado");}
+  |error {console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this.$.first_line + ', en la columna: ' + this.$.first_column);}
 ;
 
 IMPORTS: tk_import tk_id tk_puntocoma IMPORTS
@@ -106,11 +100,11 @@ IMPORTS: tk_import tk_id tk_puntocoma IMPORTS
 ;
 
 CLASS: tk_class tk_id tk_llaveabre S_CUERPO tk_llavecierra CLASS
-      |
+      |  
 ;
 
-S_CUERPO: TIPO_DATO tk_id OPCION S_CUERPO
-         |tk_void TIPO_METODO S_CUERPO
+S_CUERPO: TIPO_DATO tk_id OPCION S_CUERPO 
+         |tk_void TIPO_METODO S_CUERPO 
          |CLASS S_CUERPO
          |tk_id OP_ID tk_puntocoma
          |
@@ -152,6 +146,7 @@ LISTA_PARAMETRO: tk_coma tk_id LISTA_PARAMETRO
 
 OP_ID: tk_incremento
       |tk_decremento
+;
 
 TIPO_DATO: tk_int
           |tk_double
@@ -231,6 +226,7 @@ S_WHILE: tk_while tk_parentesisabre CONDICION tk_parentesiscierra tk_llaveabre S
 ;
 
 S_DO: tk_do tk_llaveabre SENTENCIAS tk_llavecierra tk_while tk_parentesisabre  tk_id OP_WH VAL_WH tk_parentesiscierra tk_puntocoma
+;
 
 S_IMP: tk_System tk_punto tk_out tk_punto TIPO_PRINT tk_parentesisabre VAL_IMP SUM tk_parentesiscierra tk_puntocoma
 ;

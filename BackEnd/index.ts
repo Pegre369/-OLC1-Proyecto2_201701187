@@ -1,6 +1,7 @@
 import express from 'express';
 import * as bodyparser from "body-parser";  
 import cors from 'cors';
+import * as gramatica from"./Analizador/Analisis";
 
 var app=express();
 app.use(bodyparser.json());
@@ -21,7 +22,10 @@ var server = app.listen(8080, function () {
 });
 
 function prueba(texto:string){
-    var conect = texto;
-    return conect;
+    try {
+        return gramatica.parse(texto);
+    } catch (error) {
+        return "Error en compilacion de Entrada: "+ error.toString()
+    }
 }
 

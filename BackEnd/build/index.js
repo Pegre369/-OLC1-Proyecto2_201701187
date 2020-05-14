@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var bodyparser = __importStar(require("body-parser"));
 var cors_1 = __importDefault(require("cors"));
+var gramatica = __importStar(require("./Analizador/Analisis"));
 var app = express_1.default();
 app.use(bodyparser.json());
 app.use(cors_1.default());
@@ -26,6 +27,10 @@ var server = app.listen(8080, function () {
     console.log('Servidor escuchando en puerto 8080...');
 });
 function prueba(texto) {
-    var conect = texto;
-    return conect;
+    try {
+        return gramatica.parse(texto);
+    }
+    catch (error) {
+        return "Error en compilacion de Entrada: " + error.toString();
+    }
 }
