@@ -1,12 +1,19 @@
 
 %{
-   
+    const {Nodo_Arbol} = require('../NodoArbol/Nodo_Arbol');
+    let CNodo_Error = require('../Reportes/Nodo_Error');
+    let CError = require('../Reportes/Errores');
+    let count = 0;
 %}
+
 
 
 %lex
 
+%options case-sensitive
+
 %%
+
 
 [ \r\t]+            {}
 \n                  {}
@@ -15,327 +22,473 @@
 
 [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]    {};
 
-"int"       return 'tk_int';
-"double"    return 'tk_double';
-"boolean"   return 'tk_boolean';
-"char"      return 'tk_char';
-"String"    return 'tk_String';
-"class"     return 'tk_class';
-"import"    return 'tk_import';
-"if"        return 'tk_if';
-"else"      return 'tk_else';
-"switch"    return 'tk_switch';
-"case"      return 'tk_case';
-"break"     return 'tk_break';
-"default"   return 'tk_default';
-"while"     return 'tk_while';
-"do"        return 'tk_do';
-"for"       return 'tk_for';
-"continue"  return 'tk_continue';
-"return"    return 'tk_return';
-"main"      return 'tk_main';
-"System"    return 'tk_System';
-"out"       return 'tk_out';
-"print"     return 'tk_print';
-"println"   return 'tk_println';
-"void"      return 'tk_void';
+"int"                   return 'int';
+"double"                return 'double';
+"boolean"               return 'boolean';
+"char"                  return 'char';
+"String"                return 'string';
 
 
-"+"         return 'tk_mas';
-"-"         return 'tk_menos';
-"*"         return 'tk_mult';
-"/"         return 'tk_div';
-"^"         return 'tk_eleva';
-"%"         return 'tk_porcen';
-"++"        return 'tk_incremento';
-"--"        return 'tk_decremento';
-    
-
-"=="        return 'tk_igualdad';
-"!="        return 'tk_distinto';
-">"         return 'tk_mayork';
-">="        return 'tk_mayorigualk';
-"<"         return 'tk_menork';
-"<="        return 'tk_menorigualk';
-    
-
-"&&"        return 'tk_and';
-"||"        return 'tk_or';
-"!"         return 'tk_not';
+"if"                    return 'if';
+"else"                  return 'else';
+"switch"                return 'switch';
+"case"                  return 'case';
+"while"                 return 'while';
+"do"                    return 'do';
+"for"                   return 'for';
+"void"                  return 'void';
+"return"                return 'return';
+"break"                 return 'break';
+"main"                  return 'main';
+"continue"              return'continue';
+"System.out.println"    return'soutln';
+"System.out.print"      return'sout';
 
 
-"{"         return 'tk_llaveabre';
-"}"         return 'tk_llavecierra';
-";"         return 'tk_puntocoma';
-"("         return 'tk_parentesisabre';
-")"         return 'tk_parentesiscierra';
-":"         return 'tk_dospuntos';
-"."         return 'tk_punto';
-","         return 'tk_coma';
-"="         return 'tk_igual';
+"import"                return'import';
+"class"                 return'class';
+"true"                  return'true';
+"false"                 return'false';
+"default"               return'default';
+
+"{"                     return 'lizquierdo';
+"}"                     return 'lderecho';
+";"                     return 'puntocoma';
+"("                     return 'pizquierdo';
+")"                     return 'pderecho';
+"["                     return 'cizquierdo';
+"]"                     return 'cderecho';
+","                     return 'coma';
+":"                     return 'dospuntos';
+
+"&&"                    return 'and';
+"||"                    return 'or';
+"!="                    return 'distinto';
+"=="                    return 'igualdad';
+">="                    return 'mayorigualque';
+"<="                    return 'menorigualque';
+">"                     return 'mayorque';
+"<"                     return 'menorque';
 
 
-\"[^\"]*\"                       return 'tk_cadena';
-\'[^\']*\'                       return 'tk_caracter';
-[a-zA-Z]+([a-zA-Z]|[0-9]|_)*     return 'tk_id';
-(-)?[0-9]+("."[0-9]+)?\b  	     return 'tk_digito';
+"="                     return 'igual';
 
-<<EOF>>     return 'EOF';
 
-.           {console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column);}
+"!"                     return 'not';
 
+
+"+"                     return 'mas';
+"-"                     return 'menos';
+"*"                     return 'por';
+"/"                     return 'dividido';
+"%"                     return 'modulo';
+"^"                     return 'potencia';
+
+[0-9]+("."[0-9]+)       return 'decimal';
+
+[0-9]+\b                return 'entero';
+
+
+
+
+(\"[^"]*\")             return 'cadena';
+(\'[^']\')              return'caracter';
+
+
+
+([a-zA-Z]|[_])[a-zA-Z0-9_]* return 'IDENTIFICADOR';
+
+
+
+<<EOF>>                 return 'EOF';
+
+.                       { console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column); }
 /lex
 
+%left or
+%left and
+%left igualdad, distinto
+%left mayorigualque, menorigualque, menorque, mayorque
+%left mas, menos
+%left por, dividido, modulo
+%left potencia
+%right not
+%left UMENOS
 
+%start INICIO
+%% 
 
-%star S
-%%
-
-S: IMPORTS CLASS EOF {console.log("terminado");}
-  |error {console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this.$.first_line + ', en la columna: ' + this.$.first_column);}
+INICIO : IMPORTSYCLASES EOF {$$=$1; return $$;}
+        | error { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line)) }
 ;
 
-IMPORTS: tk_import tk_id tk_puntocoma IMPORTS
-        |
+PANIC:  puntocoma
+      | lderecho
+      | error { console.error('Este es un error sintáctico : ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
+      ;
+
+
+INSTRUCCIONES : INSTRUCCIONES INSTRUCCION
+              | INSTRUCCION
+              ;
+
+INSTRUCCION : PRINT
+            | IF2
+            | WHILE2
+            | FOR2
+            | DO2
+            | SWITCH2
+            | CLASE2
+            | PANIC  INSTRUCCION { console.error('Este es un error sintáctico estado INSTRUCCION: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); $$ = new Nodo_Arbol("Error", $1,  count++);}
 ;
 
-CLASS: tk_class tk_id tk_llaveabre S_CUERPO tk_llavecierra CLASS
-      |  
+
+INSTRUCCIONESCLASE : INSTRUCCIONESCLASE INSTRUCCIONCLASE
+              | INSTRUCCIONCLASE
+              ;
+
+INSTRUCCIONCLASE : CLASE2
 ;
 
-S_CUERPO: TIPO_DATO tk_id OPCION S_CUERPO 
-         |tk_void TIPO_METODO S_CUERPO 
-         |CLASS S_CUERPO
-         |tk_id OP_ID tk_puntocoma
-         |
+INICIO2: IMPORTSYCLASES {$$= new Nodo_Arbol("Raiz","Raiz",count++);$$.lista_Nodo.push($1)}
+         | PANIC  INICIO2 { console.error('Este es un error sintáctico estado IMPORTSYCLASES: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); $$ = new Nodo_Arbol("Error", $1,  count++);}
+    ;
+
+IMPORTSYCLASES: IMPORT2 CLASE2 {$$=new Nodo_Arbol("Raiz","Raiz",count++); $$.encontrarNode($1);$$.encontrarNode($2);}
+            |CLASE2 {$$ = new Nodo_Arbol("Raiz","Raiz",count++); $$.encontrarNode($1);}
+            ;
+
+IMPORT2: IMPORT2 import IDENTIFICADOR puntocoma {$$=$1;$$.push(new Nodo_Arbol("Import",$2+" "+$3,count++))}
+        |import IDENTIFICADOR puntocoma {$$=[];$$.push(new Nodo_Arbol("Import",$1+" "+$2,count++))}
+        ;
+
+INSTRUCCIONESDENTROCLASE : INSTRUCCIONESDENTROCLASE INSTRUCCIONDENTROCLASE {$$=$1;$$.push($2)}
+              | INSTRUCCIONDENTROCLASE   {$$=[];$$.push($1)}
+              ;
+
+INSTRUCCIONDENTROCLASE : METODO2 {$$ = $1}
+            | FUNCION2 {$$ = $1}
+            | DECLARACION {$$ = $1}
 ;
 
-OPCION: tk_puntocoma
-       |tk_parentesisabre PARAMETRO tk_parentesiscierra tk_llaveabre SENTENCIAS tk_llavecierra
-       |tk_coma tk_id LISTADO tk_puntocoma
-       |tk_igual IGUAL tk_puntocoma
+INSTRUCCIONESMETODO : INSTRUCCIONESMETODO INSTRUCCIONMETODO {$$=$1;$$.push($2)}
+              | INSTRUCCIONMETODO   {$$=[];$$.push($1)}
+              ;
+
+INSTRUCCIONMETODO : PRINT {$$ = $1}
+            | IFM {$$ = $1}
+            | WHILEM {$$ = $1}
+            | FORM {$$ = $1}
+            | DOM {$$ = $1}
+            | SWITCHM {$$ = $1}
+            | DECLARACION {$$ = $1}
+            | ASIGNACION {$$ = $1}
+            | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1,count++); $$.encontrarNode($3)}
+            | return EXPRESION puntocoma {$$ = new Nodo_Arbol("Sentencia",$1,count++);}
 ;
 
-LISTADO: tk_coma tk_id LISTADO
-        |tk_igual IGUAL
-        |
+INSTRUCCIONESFUNCION : INSTRUCCIONESFUNCION INSTRUCCIONFUNCION {$$=$1;$$.push($2)}
+              | INSTRUCCIONFUNCION {$$=[];$$.push($1)}
+              ;
+
+INSTRUCCIONFUNCION : PRINT {$$ = $1}
+            | IF2 {$$ = $1}
+            | WHILE2 {$$ = $1}
+            | FOR2 {$$ = $1}
+            | DO2 {$$ = $1}
+            | SWITCH2 {$$ = $1}
+            | DECLARACION {$$ = $1}
+            | ASIGNACION {$$ = $1}
+            | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1,count++); $$.encontrarNode($3)}
+
 ;
 
-PARAMETRO: TIPO_DATO tk_id LISTADO_PAR
-          |
+INSTRUCCIONESIF: INSTRUCCIONESIF INSTRUCCIONIF {$$=$1;$$.push($2)}
+                |INSTRUCCIONIF {$$=[];$$.push($1)}
+                ;
+
+INSTRUCCIONIF: PRINT {$$ = $1}
+            | IF2 {$$ = $1}
+            | WHILE2 {$$ = $1}
+            | FOR2 {$$ = $1}
+            | DO2 {$$ = $1}
+            | SWITCH2 {$$ = $1}
+            | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma  {$$ = new Nodo_Arbol("Sentencia", $1,count++); $$.encontrarNode($3)}
+            | DECLARACION {$$ = $1}
+            | ASIGNACION {$$ = $1}
+            | break puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            | return EXPRESION puntocoma { $$ = new Nodo_Arbol("Sentencia", $1,count++);$$.lista_Nodo.push($2);}
+            ;
+
+INSTRUCCIONESFOR: INSTRUCCIONESFOR INSTRUCCIONFOR {$$=$1;$$.push($2)}
+                |INSTRUCCIONFOR {$$=[];$$.push($1)}
+                ;
+
+INSTRUCCIONFOR: PRINT {$$ = $1}
+            | IF2 {$$ = $1}
+            | WHILE2 {$$ = $1}
+            | FOR2 {$$ = $1}
+            | DO2 {$$ = $1}
+            | SWITCH2 {$$ = $1}
+            | break puntocoma { $$ = new Nodo_Arbol("Sentencia", $1,count++);}
+            | continue puntocoma { $$ = new Nodo_Arbol("Sentencia", $1,count++);}
+            | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1,count++); $$.encontrarNode($3)}
+            | DECLARACION {$$ = $1}
+            | ASIGNACION {$$ = $1}
+            | return EXPRESION puntocoma { $$ = new Nodo_Arbol("Sentencia", $1,count++);$$.lista_Nodo.push($2);}
+            ;
+
+
+INSTRUCCIONESSWITCH: INSTRUCCIONESSWITCH INSTRUCCIONSWITCH {$$=$1;$$.push($2)}
+                |INSTRUCCIONSWITCH {$$=[];$$.push($1)}
+                ;
+
+INSTRUCCIONSWITCH: PRINT {$$ = $1}
+            | IF2 {$$ = $1}
+            | WHILE2  {$$ = $1}
+            | FOR2 {$$ = $1}
+            | DO2 {$$ = $1}
+            | SWITCH2 {$$ = $1}
+            | break puntocoma { $$ = new Nodo_Arbol("Sentencia", $1,count++);}
+            |IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1,count++); $$.encontrarNode($3)}
+            |DECLARACION {$$ = $1}
+            |ASIGNACION {$$ = $1}
+            |return EXPRESION puntocoma { $$ = new Nodo_Arbol("Sentencia", $1,count++);$$.lista_Nodo.push($2);}
+            ;
+
+LISTAEXPRESION: LISTAEXPRESION coma EXPRESION  {$$=$1;$$.push($3)}
+                |EXPRESION {$$=[];$$.push($1)}
+                ;
+
+
+FUNCION2: TIPO IDENTIFICADOR pizquierdo PARAMETROS pderecho BLOQUE_INSTRUCCIONESFUNCION {$$=new Nodo_Arbol("Funcion",$1+" "+$2, count++);$$.encontrarNode($4);if($6!=null){$$.encontrarNode($6)};}
+        | TIPO IDENTIFICADOR pizquierdo  pderecho BLOQUE_INSTRUCCIONESFUNCION {$$=new Nodo_Arbol("Funcion",$1+" "+$2, count++);if($5!=null){$$.encontrarNode($5)};}
+
+    ;
+
+METODO2 : void IDENTIFICADOR pizquierdo PARAMETROS pderecho BLOQUE_INSTRUCCIONESMETODO {$$=new Nodo_Arbol("Metodo",$1+" "+$2,count++);$$.encontrarNode($4);if($6!=null){$$.encontrarNode($6)};}
+        | void IDENTIFICADOR pizquierdo  pderecho BLOQUE_INSTRUCCIONESMETODO {$$=new Nodo_Arbol("Metodo",$1+" "+$2,count++);if($5!=null){$$.encontrarNode($5)};}
+        | void main pizquierdo pderecho BLOQUE_INSTRUCCIONESMETODO {$$=new Nodo_Arbol("Main",$1+" "+$2,count++);if($5!=null){$$.encontrarNode($5)};}
+    ;
+
+CLASE2 : CLASE2 class IDENTIFICADOR BLOQUE_INSTRUCCIONESCLASE { $$= $1; let y = new Nodo_Arbol("Clase", $2+" "+$3, count++);  if($4!=null){y.encontrarNode($4)}; $$.push(y); }
+       | class IDENTIFICADOR BLOQUE_INSTRUCCIONESCLASE { $$ = [] ; let x = new Nodo_Arbol("Clase", $1+" "+$2, count++);if($3!=null){x.encontrarNode($3)}; $$.push(x);}
+    ;
+
+SWITCH2 : switch  CONDICION lizquierdo CASE2 lderecho {$$=new Nodo_Arbol("Sentencia",$1, count++);$$.lista_Nodo.push($2);$$.encontrarNode($4);}
+        | switch CONDICION lizquierdo CASE2 DEFAULT2 lderecho {$$=new Nodo_Arbol("Sentencia",$1, count++);$$.lista_Nodo.push($2);$$.encontrarNode($4);$$.lista_Nodo.push($5);}
+    ;
+
+CASE2: CASE2 case EXPRESION dospuntos INSTRUCCIONESSWITCH {$$=$1;$$.push(new Nodo_Arbol("Sentencia",$2, count++));$$[$$.length-1].lista_Nodo.push($3);if($5!=null){$$[$$.length-1].encontrarNode($5)};}
+    |case EXPRESION dospuntos INSTRUCCIONESSWITCH {$$=[];$$.push(new Nodo_Arbol("Sentencia",$1, count++));$$[0].lista_Nodo.push($2);if($4!=null){$$[0].encontrarNode($4)} ;}
+    ;
+
+DEFAULT2:  default dospuntos  INSTRUCCIONESSWITCH {$$=new Nodo_Arbol("Sentencia",$1, count++);if($3!=null){$$.encontrarNode($3)};}
+    ;
+
+DO2 : do BLOQUE_INSTRUCCIONESFOR while CONDICION puntocoma {$$=new Nodo_Arbol("Sentencia",$1+$3, count++);if($2!=null){$$.encontrarNode($2)};$$.lista_Nodo.push($4);}
+    ;
+
+FOR2 : for pizquierdo DECLARACION EXPRESION puntocoma CONDICIONFOR pderecho BLOQUE_INSTRUCCIONESFOR {$$=new Nodo_Arbol("Sentencia",$1, count++); $$.lista_Nodo.push($3);$$.lista_Nodo.push($4);$$.lista_Nodo.push($6);if($8!=null){$$.encontrarNode($8)};}
+     | for pizquierdo ASIGNACION EXPRESION puntocoma CONDICIONFOR pderecho BLOQUE_INSTRUCCIONESFOR  {$$=new Nodo_Arbol("Sentencia",$1, count++); $$.lista_Nodo.push($3);$$.lista_Nodo.push($4);$$.llista_NodoistaIns.push($6);if($8!=null){$$.encontrarNode($8)};}
+    ;
+
+
+CONDICIONFOR : IDENTIFICADOR mas mas {$$ = new Nodo_Arbol("Asignacion",$1, count++); $$.lista_Nodo.push(new Nodo_Arbol("Incremento",$2+$3, count++));}
+     | IDENTIFICADOR menos menos {$$ = new Nodo_Arbol("Asignacion",$1, count++); $$.lista_Nodo.push(new Nodo_Arbol("Decremento",$2+$3, count++));}
 ;
 
-LISTADO_PAR: tk_coma TIPO_DATO tk_id LISTADO_PAR
+TIPO : string {$$ = $1;}
+     | boolean {$$ = $1;}
+     | char {$$ = $1;}
+     | double {$$ = $1;}
+     | int {$$ = $1;}
+     ;
+
+DECLARACION : TIPO LISTAID igual EXPRESION puntocoma {$$=new Nodo_Arbol("Declaracion",$1, count++); $$.encontrarNode($2);$$.lista_Nodo.push($4);}
+            | TIPO LISTAID puntocoma {$$=new Nodo_Arbol("Declaracion",$1, count++); $$.encontrarNode($2);}
             |
+            ;
+
+
+LISTAID: LISTAID coma IDENTIFICADOR {$$=$1;$$.push(new Nodo_Arbol("Variable",$3, count++));}
+        |IDENTIFICADOR {$$=[];$$.push(new Nodo_Arbol("Variable",$1, count++));}
+        ;
+
+
+ASIGNACION : IDENTIFICADOR igual EXPRESION puntocoma {$$=new Nodo_Arbol("Asignacion",$1, count++); $$.lista_Nodo.push($3);}
+            | IDENTIFICADOR mas mas puntocoma {$$ = new Nodo_Arbol("Asignacion",$1, count++); $$.lista_Nodo.push(new Nodo_Arbol("Incremento",$2+$3, count++));}
+            | IDENTIFICADOR menos menos puntocoma {$$ = new Nodo_Arbol("Asignacion",$1, count++); $$.lista_Nodo.push(new Nodo_Arbol("Decremento",$2+$3, count++));}
+    ;
+
+WHILE2 : while CONDICION BLOQUE_INSTRUCCIONESFOR { $$ = new Nodo_Arbol("Sentencia", $1, count++);$$.lista_Nodo.push($2); if($3!=null){$$.encontrarNode($3)};}
+      ;
+
+IF2 : if CONDICION BLOQUE_INSTRUCCIONESIF { $$ = new Nodo_Arbol("Sentencia", $1, count++);$$.lista_Nodo.push($2); if($3!=null){$$.encontrarNode($3)};}
+   | if CONDICION BLOQUE_INSTRUCCIONESIF ELSE2 { $$ = new Nodo_Arbol("Sentencia", $1, count++);$$.lista_Nodo.push($2); if($3!=null){$$.encontrarNode($3)};$$.lista_Nodo.push($4);}
+   ;
+
+ELSE2: else BLOQUE_INSTRUCCIONESIF { $$ = new Nodo_Arbol("Sentencia", $1, count++); if($2!=null){$$.encontrarNode($2)};}
+     |else IF2 { $$ = $2;}
+    ;
+
+CONDICION : pizquierdo EXPRESION pderecho { $$ = $2;}
+          ;
+
+
+BLOQUE_INSTRUCCIONES : lizquierdo INSTRUCCIONES lderecho
+                     | lizquierdo lderecho
+                     ;
+
+BLOQUE_INSTRUCCIONESIF : lizquierdo INSTRUCCIONESIF lderecho {$$=$2}
+                     | lizquierdo lderecho {$$=null;}
+                     ;
+
+BLOQUE_INSTRUCCIONESFOR : lizquierdo INSTRUCCIONESFOR lderecho  {$$=$2}
+                     | lizquierdo lderecho {$$=null;}
+                     ;
+
+
+BLOQUE_INSTRUCCIONESCLASE : lizquierdo INSTRUCCIONESDENTROCLASE lderecho {$$=$2}
+                     | lizquierdo lderecho {$$=null;}
+                     ;
+
+BLOQUE_INSTRUCCIONESMETODO : lizquierdo INSTRUCCIONESMETODO lderecho {$$=$2}
+                     | lizquierdo lderecho {$$=null;}
+                     ;
+
+BLOQUE_INSTRUCCIONESFUNCION : lizquierdo INSTRUCCIONESFUNCION return EXPRESION puntocoma lderecho {$$=$2;$$.push(new Nodo_Arbol("Sentencia",$3,count++));$$[$$.length-1].lista_Nodo.push($4);}
+                     | lizquierdo INSTRUCCIONESFUNCION lderecho {$$=$2}
+                     | lizquierdo return EXPRESION puntocoma lderecho {$$=[]; $$.push(new Nodo_Arbol("Sentencia",$2, count++));$$[0].lista_Nodo.push($3);}
+                     ;
+
+PRINT : sout pizquierdo EXPRESION pderecho puntocoma { $$ = new Nodo_Arbol("Imprimir", $1, count++);$$.lista_Nodo.push($3);}
+    | soutln pizquierdo EXPRESION pderecho puntocoma { $$ = new Nodo_Arbol("Imprimir", $1, count++);$$.lista_Nodo.push($3);}
+      ;
+
+PARAMETROS : PARAMETROS coma TIPO IDENTIFICADOR {$$=$1;$$.push(new Nodo_Arbol("Parametros",$3+" "+$4, count++));}
+        | TIPO IDENTIFICADOR {$$=[];$$.push(new Nodo_Arbol("Parametros",$1+" "+$2, count++));}
+        ;
+
+IFM:if CONDICION BLOQUE_INSTRUCCIONESIFM { $$ = new Nodo_Arbol("Sentencia", $1, count++);$$.lista_Nodo.push($2); if($3!=null){$$.encontrarNode($3)};}
+   | if CONDICION BLOQUE_INSTRUCCIONESIFM ELSEM { $$ = new Nodo_Arbol("Sentencia", $1, count++);$$.lista_Nodo.push($2); if($3!=null){$$.encontrarNode($3)};$$.lista_Nodo.push($4);}
+   ;
+
+
+ELSEM: else BLOQUE_INSTRUCCIONESIFM { $$ = new Nodo_Arbol("Sentencia", $1, count++); if($2!=null){$$.encontrarNode($2)};}
+    |else IFM { $$ = $2;}
 ;
 
-IGUAL: tk_cadena CADENA
-      |tk_caracter CADENA
-      |tk_id OPCION_SIG
-      |tk_digito ART
-;
+INSTRUCCIONESIFM: INSTRUCCIONESIFM INSTRUCCIONIFM {$$=$1;$$.push($2)}
+                |INSTRUCCIONIFM {$$=[];$$.push($1)}
+                ;
 
-OPCION_SIG: tk_parentesisabre tk_id LISTA_PARAMETRO tk_parentesiscierra
-           |ARITMETICO VAL ART
-           |OP_ID
-;
+INSTRUCCIONIFM: PRINT {$$ = $1}
+            | IFM {$$=$1}
+            | WHILEM {$$=$1}
+            | FORM  {$$=$1}
+            | DOM   {$$=$1}
+            | SWITCHM  {$$=$1}
+            | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1, count++); $$.encontrarNode($3)}
+            | DECLARACION {$$=$1}
+            | ASIGNACION {$$=$1}
+            | break puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            | return EXPRESION puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            ;
 
-LISTA_PARAMETRO: tk_coma tk_id LISTA_PARAMETRO
-                |
-;
+BLOQUE_INSTRUCCIONESIFM : lizquierdo INSTRUCCIONESIFM lderecho {$$=$2}
+                     | lizquierdo lderecho {$$=null;}
+                     ;
 
-OP_ID: tk_incremento
-      |tk_decremento
-;
 
-TIPO_DATO: tk_int
-          |tk_double
-          |tk_boolean
-          |tk_char
-          |tk_String
-;
+WHILEM : while CONDICION BLOQUE_INSTRUCCIONESFORM { $$ = new Nodo_Arbol("Sentencia", $1, count++);$$.lista_Nodo.push($2); if($3!=null){$$.encontrarNode($3)};}
+      ;
 
-ARITMETICO: tk_mas
-           |tk_menos
-           |tk_div
-           |tk_eleva
-           |tk_porcen
-           |tk_mult
-;
 
-ART: OP_ID
-    |ARITMETICO VAL ART
-    |
-;
+BLOQUE_INSTRUCCIONESFORM : lizquierdo INSTRUCCIONESFORM lderecho {$$=$2}
+                     | lizquierdo lderecho {$$=null;}
+                     ;
 
-VAL: tk_id
-    |tk_digito
-    |tk_cadena CADENA
-    |tk_caracter CADENA
-;
+INSTRUCCIONESFORM: INSTRUCCIONESFORM INSTRUCCIONFORM {$$=$1;$$.push($2)}
+                |INSTRUCCIONFORM {$$=[];$$.push($1)}
+                ;
 
-CADENA: tk_mas VALC CADENA
-       |
-;
+INSTRUCCIONFORM: PRINT {$$ = $1}
+            | IFM {$$ = $1}
+            | WHILEM {$$ = $1}
+            | FORM {$$ = $1}
+            | DOM {$$ = $1}
+            | SWITCHM {$$ = $1}
+            | break puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            | continue puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1, count++); $$.encontrarNode($3)}
+            | DECLARACION {$$ = $1}
+            | ASIGNACION {$$ = $1}
+            | return EXPRESION puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            ;
 
-VALC: tk_id ART
-      |tk_digito ART
-      |tk_cadena
-      |tk_caracter
-;
+FORM : for pizquierdo DECLARACION EXPRESION puntocoma CONDICIONFOR pderecho BLOQUE_INSTRUCCIONESFORM {$$=new Nodo_Arbol("Sentencia",$1, count++); $$.lista_Nodo.push($3);$$.lista_Nodo.push($4);$$.lista_Nodo.push($6);if($8!=null){$$.encontrarNode($8)};}
+     | for pizquierdo ASIGNACION EXPRESION puntocoma CONDICIONFOR pderecho BLOQUE_INSTRUCCIONESFORM {$$=new Nodo_Arbol("Sentencia",$1, count++); $$.lista_Nodo.push($3);$$.lista_Nodo.push($4);$$.lista_Nodo.push($6);if($8!=null){$$.encontrarNode($8)};}
+    ;
 
-TIPO_METODO: tk_id tk_parentesisabre PARAMETRO tk_parentesiscierra tk_llaveabre SENTENCIAS tk_llavecierra
-            |tk_main tk_parentesisabre tk_parentesiscierra tk_llaveabre SENTENCIAS tk_llavecierra
-;
+DOM : do BLOQUE_INSTRUCCIONESFORM while CONDICION puntocoma {$$=new Nodo_Arbol("Sentencia",$1+$3, count++);if($2!=null){$$.encontrarNode($2)};$$.lista_Nodo.push($4);}
+    ;
 
-SENTENCIAS: tk_id OP_ID tk_puntocoma SENTENCIAS
-           |S_FOR SENTENCIAS
-           |S_WHILE SENTENCIAS
-           |S_DO SENTENCIAS
-           |S_IMP SENTENCIAS
-           |S_B SENTENCIAS
-           |S_R SENTENCIAS
-           |S_C SENTENCIAS
-           |S_IF SENTENCIAS
-           |S_SWICH SENTENCIAS
-           |
-;
 
-S_FOR: tk_for tk_parentesisabre INI tk_igual VAL_FOR tk_puntocoma tk_id OP_FOR VAL_FOR tk_puntocoma tk_id AD tk_parentesiscierra tk_llaveabre SENTENCIAS tk_llavecierra
-;
+SWITCHM : switch  CONDICION lizquierdo CASEM lderecho {$$=new Nodo_Arbol("Sentencia",$1, count++);$$.lista_Nodo.push($2);$$.encontrarNode($4);}
+        | switch CONDICION lizquierdo CASEM DEFAULTM lderecho {$$=new Nodo_Arbol("Sentencia",$1, count++);$$.lista_Nodo.push($2);$$.encontrarNode($4);$$.lista_Nodo.push($5);}
+    ;
 
-INI: tk_int tk_id
-    |tk_id
-;
+CASEM: CASEM case EXPRESION dospuntos INSTRUCCIONESSWITCHM {$$=$1;$$.push(new Nodo_Arbol("Sentencia",$2, count++));$$[$$.length-1].lista_Nodo.push($3);if($5!=null){$$[$$.length-1].encontrarNode($5)};}
+    |case EXPRESION dospuntos INSTRUCCIONESSWITCHM {$$=[];$$.push(new Nodo_Arbol("Sentencia",$1, count++));$$[0].encontrarNode.push($2);if($4!=null){$$[0].encontrarNode($4)} ;}
+    ;
 
-VAL_FOR: tk_id
-        |tk_digito
-;
 
-OP_FOR: tk_mayork
-       |tk_menork
-       |tk_mayorigualk
-       |tk_menorigualk
-;
+DEFAULTM:  default dospuntos  INSTRUCCIONESSWITCHM {$$=new Nodo_Arbol("Sentencia",$1, count++);if($3!=null){$$.encontrarNode($3)};}
+    ;
 
-AD: tk_incremento
-   |tk_decremento
-;
+INSTRUCCIONESSWITCHM: INSTRUCCIONESSWITCHM INSTRUCCIONSWITCHM {$$=$1;$$.push($2)}
+                |INSTRUCCIONSWITCHM {$$=[];$$.push($1)}
+                ;
 
-S_WHILE: tk_while tk_parentesisabre CONDICION tk_parentesiscierra tk_llaveabre SENTENCIAS tk_llavecierra
-;
+INSTRUCCIONSWITCHM: PRINT {$$ = $1}
+            | IFM {$$ = $1}
+            | WHILEM  {$$ = $1}
+            | FORM {$$ = $1}
+            | DOM {$$ = $1}
+            | SWITCHM {$$ = $1}
+            | break puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            |IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho puntocoma {$$ = new Nodo_Arbol("Sentencia", $1, count++); $$.encontrarNode($3)}
+            |DECLARACION {$$ = $1}
+            |ASIGNACION {$$ = $1}
+            |return EXPRESION puntocoma { $$ = new Nodo_Arbol("Sentencia", $1, count++);}
+            ;
 
-S_DO: tk_do tk_llaveabre SENTENCIAS tk_llavecierra tk_while tk_parentesisabre  tk_id OP_WH VAL_WH tk_parentesiscierra tk_puntocoma
-;
 
-S_IMP: tk_System tk_punto tk_out tk_punto TIPO_PRINT tk_parentesisabre VAL_IMP SUM tk_parentesiscierra tk_puntocoma
-;
-
-TIPO_PRINT: tk_print
-           |tk_println
-;
-
-VAL_IMP: tk_digito
-        |tk_id OPCION_IMP
-        |tk_cadena
-        |tk_caracter
-;
-
-OPCION_IMP: tk_parentesisabre tk_id LISTA_PARAMETRO tk_parentesiscierra
-           |
-;
-
-SUM: tk_mas VAL_IMP SUM
-    |
-;
-
-S_R: tk_return S_RF tk_puntocoma
-;
-
-S_RF: VAL ART
-     |
-;
-
-S_B: tk_break tk_puntocoma
-;
-
-S_C: tk_continue tk_puntocoma
-;
-
-S_IF: tk_if tk_parentesisabre CONDICION tk_parentesiscierra tk_llaveabre SENTENCIAS tk_llavecierra ELSE
-;
-
-CONDICION: UNA
-          |tk_parentesisabre UNA tk_parentesiscierra LOG
-;
-
-UNA: tk_not tk_id
-    |tk_id OP_IF
-;
-
-LOG: tk_or tk_parentesisabre UNA tk_parentesiscierra LOG
-    |tk_and tk_parentesisabre UNA tk_parentesiscierra LOG
-    |
-;
-
-OP_IF: tk_mayork VAL_IF
-     | tk_menork VAL_IF
-     | tk_mayorigualk VAL_IF
-     | tk_menorigualk VAL_IF
-     | tk_igualdad VAL_IF
-     | tk_distinto VAL_IF
-;
-
-VAL_IF: tk_id
-       |tk_digito
-;
-
-ELSE: tk_else IF tk_llaveabre SENTENCIAS tk_llaveabre ELSE
-     |
-;
-
-IF: tk_if tk_parentesisabre CONDICION tk_parentesiscierra
-   |
-;
-
-S_SW: tk_switch tk_parentesisabre CAD tk_parentesiscierra tk_llaveabre tk_case CASE DEF tk_llavecierra
-;
-
-CAD: tk_not tk_id
-    |tk_id SW_OP
-;
-
-SW_OP: tk_mas VAL_SW SW_OP
-      |tk_menos VAL_SW SW_OP
-      |tk_div VAL_SW SW_OP
-      |tk_mult VAL_SW SW_OP
-      |tk_eleva VAL_SW SW_OP
-      |tk_porcen VAL_SW SW_OP
-      |tk_parentesisabre tk_id LISTA_PARAMETRO tk_parentesiscierra
-      |
-;
-
-CASE: VAL_CASE tk_dospuntos CONTEN tk_break tk_puntocoma REP
-;
-
-VAL_CASE: tk_id
-         |tk_cadena
-         |tk_digito
-;
-
-CONTEN: tk_id tk_igual IGUAL_CASE tk_puntocoma
-       |SENTENCIAS
-       |
-;
-
-IGUAL_CASE: tk_cadena
-           |VAL ART
-;
-
-REP: tk_case CASE
-    |
-;
-
-DEF: tk_default tk_dospuntos CONTEN
-    |
-;
+EXPRESION : menos EXPRESION %prec UMENOS
+          | not EXPRESION	          { $$ = new Nodo_Arbol("Relacional", $1, count++);$$.lista_Nodo.push($2);}
+          | EXPRESION mas EXPRESION	     {$$= new Nodo_Arbol("Artimetica",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION menos EXPRESION     {$$= new Nodo_Arbol("Artimetica",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION por EXPRESION		    {$$= new Nodo_Arbol("Artimetica",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION dividido EXPRESION	 {$$= new Nodo_Arbol("Artimetica",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION menorque EXPRESION	 {$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION mayorque EXPRESION	{$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION mayorigualque EXPRESION	 {$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION menorigualque EXPRESION	  {$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION igualdad EXPRESION	{$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION distinto EXPRESION	{$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION or EXPRESION	    {$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION and EXPRESION	   {$$= new Nodo_Arbol("Relacional",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION potencia EXPRESION	{$$= new Nodo_Arbol("Artimetica",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | EXPRESION modulo EXPRESION	  {$$= new Nodo_Arbol("Artimetica",$2, count++);$$.lista_Nodo.push($1);$$.lista_Nodo.push($3);}
+          | decimal   { $$ = new Nodo_Arbol("Primitivo", $1, count++);}
+          | entero	  { $$ = new Nodo_Arbol("Primitivo", $1, count++);}
+          | true	  { $$ = new Nodo_Arbol("Primitivo", $1, count++);}
+          | false	  { $$ = new Nodo_Arbol("Primitivo", $1,  count++);}
+          | cadena    { $$ = new Nodo_Arbol("Primitivo", $1,  count++);}
+          | caracter  { $$ = new Nodo_Arbol("Primitivo", $1,  count++);}
+          | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho 	{$$ = new Nodo_Arbol("Variable", $1, count++); $$.encontrarNode($3)}
+          | IDENTIFICADOR pizquierdo pderecho 		    { $$ = new Nodo_Arbol("Variable", $1, count++);}
+          | IDENTIFICADOR	{ $$ = new Nodo_Arbol("Variable", $1,  count++);}
+          | PANIC EXPRESION { console.error('Este es un error sintáctico estado EXPRESION: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); $$ = new Nodo_Arbol("Error", $1,  count++);}
+          ;

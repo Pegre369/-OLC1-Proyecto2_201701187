@@ -1,5 +1,4 @@
-export class Nodo_Error {
-
+export class NodoError{
     private tipo:string;
     private descripcion:string;
     private linea:number;
@@ -21,4 +20,5 @@ export class Nodo_Error {
     public getlinea():number{
         return this.linea;
     }
+    
 }

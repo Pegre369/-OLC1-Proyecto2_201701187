@@ -13,19 +13,19 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Reporte_Errores = /** @class */ (function (_super) {
-    __extends(Reporte_Errores, _super);
-    function Reporte_Errores() {
+var Errores = /** @class */ (function (_super) {
+    __extends(Errores, _super);
+    function Errores() {
         return _super.call(this) || this;
     }
-    Reporte_Errores.add = function (err) {
+    Errores.add = function (err) {
         this.prototype.push(err);
     };
-    Reporte_Errores.clear = function () {
-        while (this.prototype.length > 0) {
-            this.prototype.pop();
+    Errores.mostrar = function () {
+        for (var i = 0; i < this.prototype.length; i++) {
+            console.log(+this.prototype[i].getdescripcion() + " Tipo: " + this.prototype[i].gettipo() + " Linea: " + this.prototype[i].getlinea());
         }
     };
-    return Reporte_Errores;
+    return Errores;
 }(Array));
-exports.Reporte_Errores = Reporte_Errores;
+exports.Errores = Errores;

@@ -14,6 +14,7 @@ var express_1 = __importDefault(require("express"));
 var bodyparser = __importStar(require("body-parser"));
 var cors_1 = __importDefault(require("cors"));
 var gramatica = __importStar(require("./Analizador/Analisis"));
+var Errores_1 = require("./Reportes/Errores");
 var app = express_1.default();
 app.use(bodyparser.json());
 app.use(cors_1.default());
@@ -21,6 +22,7 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.post('/Calcular/', function (req, res) {
     var entrada = req.body.text;
     var resultado = prueba(entrada);
+    Errores_1.Errores.mostrar();
     res.send(resultado.toString());
 });
 var server = app.listen(8080, function () {
