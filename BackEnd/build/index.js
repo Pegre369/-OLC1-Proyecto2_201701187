@@ -22,8 +22,15 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.post('/Analizar/', function (req, res) {
     var entrada = req.body.text;
     var resultado = prueba(entrada);
-    Errores_1.Errores.mostrar();
-    res.send(Errores_1.Errores.mostrar_Lista().toString());
+    if (Errores_1.Errores.Vacio()) {
+        Errores_1.Errores.mostrar();
+        res.send(Errores_1.Errores.mostrar_Lista().toString());
+        Errores_1.Errores.clear();
+    }
+    else {
+        Errores_1.Errores.clear();
+        res.send(resultado.toString());
+    }
 });
 var server = app.listen(8080, function () {
     console.log('Servidor escuchando en puerto 8080...');

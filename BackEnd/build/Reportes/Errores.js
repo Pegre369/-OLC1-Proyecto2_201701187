@@ -23,7 +23,7 @@ var Errores = /** @class */ (function (_super) {
     };
     Errores.mostrar = function () {
         for (var i = 0; i < this.prototype.length; i++) {
-            console.log(this.prototype[i].getdescripcion() + " Tipo: " + this.prototype[i].gettipo() + " Linea: " + this.prototype[i].getlinea());
+            console.log(this.prototype[i].getdescripcion() + " Tipo: " + this.prototype[i].gettipo() + " Linea: " + this.prototype[i].getlinea() + " Columna: " + this.prototype[i].getcolumna());
         }
     };
     Errores.mostrar_Lista = function () {
@@ -56,6 +56,7 @@ var Errores = /** @class */ (function (_super) {
             texto += "<td>" + this.prototype[i].gettipo() + "</td><td>" +
                 this.prototype[i].getdescripcion() + "</td><td>" +
                 this.prototype[i].getlinea() + "</td>\n";
+            this.prototype[i].getcolumna() + "</td>\n";
             texto += "</tr>\n";
         }
         texto += "</tbody> \n";
@@ -63,6 +64,18 @@ var Errores = /** @class */ (function (_super) {
         texto += "</body>";
         texto += "</html>";
         return texto;
+    };
+    Errores.Vacio = function () {
+        var vacio = false;
+        while (this.prototype.length > 0) {
+            return true;
+        }
+        return vacio;
+    };
+    Errores.clear = function () {
+        while (this.prototype.length > 0) {
+            this.prototype.pop();
+        }
     };
     return Errores;
 }(Array));

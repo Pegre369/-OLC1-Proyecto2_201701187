@@ -2,11 +2,13 @@ export class NodoError{
     private tipo:string;
     private descripcion:string;
     private linea:number;
+    private columna:number;
 
-    constructor(tipo:string,descripcion:string,linea:number){
+    constructor(tipo:string,descripcion:string,linea:number,columna:number){
         this.tipo=tipo;
         this.descripcion=descripcion;
         this.linea=(linea+1);
+        this.columna=(columna+1);
     }
 
     public gettipo():string{
@@ -19,6 +21,10 @@ export class NodoError{
 
     public getlinea():number{
         return this.linea;
+    }
+
+    public getcolumna():number{
+        return this.columna;
     }
     
 }

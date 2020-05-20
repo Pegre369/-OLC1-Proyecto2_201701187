@@ -13,8 +13,20 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.post('/Analizar/', function (req, res) {
     var entrada=req.body.text;
     var resultado = prueba(entrada);
-    Errores.mostrar();
-    res.send(Errores.mostrar_Lista().toString());
+    
+    if(Errores.Vacio()){
+
+        Errores.mostrar();
+        res.send(Errores.mostrar_Lista().toString());
+        Errores.clear();
+
+    }else{
+
+        Errores.clear();
+        res.send(resultado.toString());
+
+    }
+
 });
 
 

@@ -13,7 +13,7 @@ class Errores extends Array<NodoError>{
     public static mostrar(){
         for(var i=0; i<this.prototype.length;i++){
         
-        console.log(this.prototype[i].getdescripcion()+" Tipo: "+this.prototype[i].gettipo()+" Linea: "+this.prototype[i].getlinea());
+        console.log(this.prototype[i].getdescripcion()+" Tipo: "+this.prototype[i].gettipo()+" Linea: "+this.prototype[i].getlinea()+" Columna: "+this.prototype[i].getcolumna());
         
         }
     }
@@ -48,6 +48,7 @@ class Errores extends Array<NodoError>{
                             texto+="<td>"+this.prototype[i].gettipo()+"</td><td>"+
                                 this.prototype[i].getdescripcion()+"</td><td>"+
                                 this.prototype[i].getlinea()+"</td>\n";
+                                this.prototype[i].getcolumna()+"</td>\n";
                                 texto+="</tr>\n";
                         }
                         texto+= "</tbody> \n";
@@ -59,6 +60,22 @@ class Errores extends Array<NodoError>{
         return texto;
     }
     
+    public static Vacio():Boolean{
+
+        var vacio:Boolean=false;
+
+        while(this.prototype.length>0){
+            return true;
+        }
+
+        return vacio;
+    }
+
+    public static clear(){
+        while(this.prototype.length>0){
+            this.prototype.pop();
+        }
+    }
 
 
 }

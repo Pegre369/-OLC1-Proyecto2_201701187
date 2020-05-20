@@ -102,7 +102,7 @@
 
 <<EOF>>                 return 'EOF';
 
-.                       { console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column); }
+.                       {console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column); }
 /lex
 
 %left or
@@ -119,12 +119,12 @@
 %% 
 
 INICIO : IMPORTSYCLASES EOF {$$=$1; return $$;}
-        | error { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line)) }
+        | error { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); }
 ;
 
 PANIC:  puntocoma
       | lderecho
-      | error { console.error('Este es un error sintáctico : ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); }
+      | error { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); }
       ;
 
 
@@ -139,7 +139,7 @@ INSTRUCCION : PRINT
             | DO2
             | SWITCH2
             | CLASE2
-            | PANIC  INSTRUCCION { console.error('Este es un error sintáctico estado INSTRUCCION: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); $$ = new Nodo_Arbol("Error", $1,  count++);}
+            | PANIC  INSTRUCCION { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); }
 ;
 
 
@@ -151,7 +151,7 @@ INSTRUCCIONCLASE : CLASE2
 ;
 
 INICIO2: IMPORTSYCLASES {$$= new Nodo_Arbol("Raiz","Raiz",count++);$$.lista_Nodo.push($1)}
-         | PANIC  INICIO2 { console.error('Este es un error sintáctico estado IMPORTSYCLASES: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); $$ = new Nodo_Arbol("Error", $1,  count++);}
+         | PANIC  INICIO2 { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); $$ = new Nodo_Arbol("Error", $1,  count++);}
     ;
 
 IMPORTSYCLASES: IMPORT2 CLASE2 {$$=new Nodo_Arbol("Raiz","Raiz",count++); $$.encontrarNode($1);$$.encontrarNode($2);}
@@ -490,5 +490,5 @@ EXPRESION : menos EXPRESION %prec UMENOS
           | IDENTIFICADOR pizquierdo LISTAEXPRESION pderecho 	{$$ = new Nodo_Arbol("Variable", $1, count++); $$.encontrarNode($3)}
           | IDENTIFICADOR pizquierdo pderecho 		    { $$ = new Nodo_Arbol("Variable", $1, count++);}
           | IDENTIFICADOR	{ $$ = new Nodo_Arbol("Variable", $1,  count++);}
-          | PANIC EXPRESION { console.error('Este es un error sintáctico estado EXPRESION: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); $$ = new Nodo_Arbol("Error", $1,  count++);}
+          | PANIC EXPRESION { CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); $$ = new Nodo_Arbol("Error", $1,  count++);}
           ;

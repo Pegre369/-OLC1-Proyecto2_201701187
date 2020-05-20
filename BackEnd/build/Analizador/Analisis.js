@@ -86,20 +86,14 @@ switch (yystate) {
 case 1:
 this.$=$$[$0-1]; return this.$;
 break;
-case 2:
- CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line)) 
-break;
-case 5:
- console.error('Este es un error sintáctico : ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); 
-break;
-case 15:
- console.error('Este es un error sintáctico estado INSTRUCCION: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); this.$ = new Nodo_Arbol("Error", $$[$0-1],  count++);
+case 2: case 5: case 15:
+ CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); 
 break;
 case 19:
 this.$= new Nodo_Arbol("Raiz","Raiz",count++);this.$.lista_Nodo.push($$[$0])
 break;
-case 20:
- console.error('Este es un error sintáctico estado IMPORTSYCLASES: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); this.$ = new Nodo_Arbol("Error", $$[$0-1],  count++);
+case 20: case 230:
+ CError.Errores.add(new CNodo_Error.NodoError("Error Sintáctico","No se esperaba el caracter: "+ yytext, this._$.first_line,this._$.first_column)); this.$ = new Nodo_Arbol("Error", $$[$0-1],  count++);
 break;
 case 21:
 this.$=new Nodo_Arbol("Raiz","Raiz",count++); this.$.encontrarNode($$[$0-1]);this.$.encontrarNode($$[$0]);
@@ -286,9 +280,6 @@ case 228:
 break;
 case 229:
  this.$ = new Nodo_Arbol("Variable", $$[$0],  count++);
-break;
-case 230:
- console.error('Este es un error sintáctico estado EXPRESION: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); this.$ = new Nodo_Arbol("Error", $$[$0-1],  count++);
 break;
 }
 },
@@ -992,7 +983,7 @@ case 57:return 23;
 break;
 case 58:return 5;
 break;
-case 59: console.error('Este es un error léxico: ' + yy_.yytext + ', en la linea: ' + yy_.yylloc.first_line + ', en la columna: ' + yy_.yylloc.first_column); 
+case 59:console.error('Este es un error léxico: ' + yy_.yytext + ', en la linea: ' + yy_.yylloc.first_line + ', en la columna: ' + yy_.yylloc.first_column); 
 break;
 }
 },
