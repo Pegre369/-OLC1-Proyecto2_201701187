@@ -19,11 +19,11 @@ var app = express_1.default();
 app.use(bodyparser.json());
 app.use(cors_1.default());
 app.use(bodyparser.urlencoded({ extended: true }));
-app.post('/Calcular/', function (req, res) {
+app.post('/Analizar/', function (req, res) {
     var entrada = req.body.text;
     var resultado = prueba(entrada);
     Errores_1.Errores.mostrar();
-    res.send(resultado.toString());
+    res.send(Errores_1.Errores.mostrar_Lista().toString());
 });
 var server = app.listen(8080, function () {
     console.log('Servidor escuchando en puerto 8080...');

@@ -10,11 +10,11 @@ app.use(cors());
 app.use(bodyparser.urlencoded({ extended: true }));
 
 
-app.post('/Calcular/', function (req, res) {
+app.post('/Analizar/', function (req, res) {
     var entrada=req.body.text;
     var resultado = prueba(entrada);
     Errores.mostrar();
-    res.send(resultado.toString());
+    res.send(Errores.mostrar_Lista().toString());
 });
 
 

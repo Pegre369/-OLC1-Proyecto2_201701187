@@ -194,17 +194,19 @@ function DescargarArchivo(){
 }
 
 /*------------------------- Prueba de conexion -----------------------------------------------------*/
+var Reporte_Error="";
 
 function Conn(){
 
     var ta = document.getElementById(get_vent());
     var contenido = ta.value;
-    var url = "http://localhost:8080/Calcular/";
+    var url = "http://localhost:8080/Analizar/";
 
     $.post(url,{text:contenido}, function(data,status){
         
         if (status.toString() == "success") {
             alert("El resultado es: "+ data.toString());
+            Reporte_Error = data.toString();
         }else{
             alert("Error estado de conexion: "+ status);
         }
@@ -212,4 +214,13 @@ function Conn(){
     });
 
 
-}   
+}
+
+function Reporte_Errores(){
+
+    var nueva_ventana = window.open('../Reporte_Errores','_blank');
+    nueva_ventana.document.write(Reporte_Error);
+    //alert(Reporte_Error)
+
+}
+
