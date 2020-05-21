@@ -29,7 +29,10 @@ app.post('/Analizar/', function (req, res) {
     }
     else {
         Errores_1.Errores.clear();
-        res.send(resultado.toString());
+        var json = JSON.stringify(resultado, null, 2);
+        json = json.split('descripcion').join('text').split('lista_Nodo').join('children');
+        console.log(json);
+        res.send(json);
     }
 });
 var server = app.listen(8080, function () {

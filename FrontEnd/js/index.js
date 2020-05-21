@@ -196,6 +196,8 @@ function DescargarArchivo(){
 /*------------------------- Prueba de conexion -----------------------------------------------------*/
 var Reporte_Error="";
 
+var Reporte_ASTs="";
+
 function Conn(){
 
     var ta = document.getElementById(get_vent());
@@ -207,6 +209,7 @@ function Conn(){
         if (status.toString() == "success") {
             alert("El resultado es: "+ data.toString());
             Reporte_Error = data.toString();
+            Reporte_ASTs = data.toString();
         }else{
             alert("Error estado de conexion: "+ status);
         }
@@ -224,3 +227,68 @@ function Reporte_Errores(){
 
 }
 
+function Pagina_Reporte_AST(){
+
+    var nueva_ventana = window.open('../Reporte_AST','_blank');
+
+    var textopagina="<!DOCTYPE html>";
+    textopagina += "<html lang=\"en\">";
+    textopagina += "<head>";
+    textopagina += " <title>Bootstrap Example</title>";
+    textopagina += "<meta charset=\"utf-8\">";
+    textopagina += " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
+    textopagina += "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\">";    
+    textopagina += "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css\" />";
+    textopagina += "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js\"></script>";
+    textopagina += "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js\"></script>";
+    textopagina += "<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js\"></script>";
+    textopagina += "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js\"></script>";
+    textopagina += "</head>";
+    textopagina += "<body>";
+    textopagina += "<div class=\"container\">";
+    textopagina += "<h1>Display</h1>";
+    textopagina += "<div id=\"jstree-tree\"></div>";
+    textopagina += "<script>";
+    textopagina += "var jsonData = ["+Reporte_ASTs+"];";
+    textopagina += "$('#jstree-tree')";
+    textopagina += " .on('changed.jstree', function (e, data) {";
+    textopagina +=" var objNode = data.instance.get_node(data.selected);";
+    textopagina +="$('#jstree-result').html('Selected: <br/><strong>' + objNode.id+'-'+objNode.text+'</strong>');";
+    textopagina +="})";
+    textopagina +=".jstree({";
+    textopagina +="core: {";
+    textopagina +="data: jsonData";
+    textopagina +="}";
+    textopagina +="});";
+    textopagina += "</script>";
+    textopagina += "</div>";
+    textopagina += "</body>";
+    textopagina += "</html>";
+
+    nueva_ventana.document.write(textopagina);
+    alert(textopagina);
+    
+
+}
+
+
+
+function Reporte_AST(val){
+
+
+    alert(Reporte_ASTs);
+
+    /*var jsonData = [Reporte_ASTs];
+        
+    $('#jstree-tree')
+      .on('changed.jstree', function (e, data) {
+        var objNode = data.instance.get_node(data.selected);
+        $('#jstree-result').html('Selected: <br/><strong>' + objNode.id+'-'+objNode.text+'</strong>');
+      })
+      .jstree({
+      core: {
+        data: jsonData
+      }
+    });*/
+
+}

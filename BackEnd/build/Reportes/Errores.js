@@ -58,6 +58,7 @@ var Errores = /** @class */ (function (_super) {
                 this.prototype[i].getlinea() + "</td>\n";
             this.prototype[i].getcolumna() + "</td>\n";
             texto += "</tr>\n";
+            No = No + 1;
         }
         texto += "</tbody> \n";
         texto += "</table> \n";

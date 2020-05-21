@@ -23,7 +23,10 @@ app.post('/Analizar/', function (req, res) {
     }else{
 
         Errores.clear();
-        res.send(resultado.toString());
+        var json = JSON.stringify(resultado,null,2);
+        json = json.split('descripcion').join('text').split('lista_Nodo').join('children');
+        console.log(json);
+        res.send(json);
 
     }
 
