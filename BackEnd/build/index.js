@@ -227,6 +227,7 @@ function copiafyv(principal, copia) {
                                                         if (parametroslstM.toString() == parametroslstCopiaM.toString()) {
                                                             console.log("los metodos " + element3.descripcion + " Son iguales en ambos archivos,por tener los mismos tipos de parametros en el mismo orden" + " de la calse " + element.descripcion);
                                                             MYFfCopia.push(element3.descripcion);
+                                                            MYFfCopia.push(element3.descripcion);
                                                         }
                                                     }
                                                 });
