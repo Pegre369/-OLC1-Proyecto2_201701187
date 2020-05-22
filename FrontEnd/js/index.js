@@ -198,25 +198,49 @@ var Reporte_Error="";
 
 var Reporte_ASTs="";
 
+var Reporte_Clases="";
+
+var contador_manda="uno";
+
 function Conn(){
 
+    
     var ta = document.getElementById(get_vent());
     var contenido = ta.value;
     var url = "http://localhost:8080/Analizar/";
 
-    $.post(url,{text:contenido}, function(data,status){
+
+    $.post(url,{text1:contenido, text2:contador_manda}, function(data,status){
         
         if (status.toString() == "success") {
-            alert("El resultado es: "+ data.toString());
-            Reporte_Error = data.toString();
-            Reporte_ASTs = data.toString();
+
+            alert("El resultado es: "+ data.Rerror);
+
+
+                Reporte_ASTs = data.arbol;
+
+                Reporte_Error = data.Rerror.toString();
+            
+                Reporte_Clases = data.Reporte_uno.toString();
+            
+
+
         }else{
             alert("Error estado de conexion: "+ status);
         }
     
-    });
+    },"json");
 
+    if(contador_manda.toString() == "dos"){
+        
+        console.log("uno");     
+        contador_manda="uno";
 
+    }else{
+        console.log("dos");
+        contador_manda="dos";
+    }
+    
 }
 
 function Reporte_Errores(){
@@ -234,7 +258,7 @@ function Pagina_Reporte_AST(){
     var textopagina="<!DOCTYPE html>";
     textopagina += "<html lang=\"en\">";
     textopagina += "<head>";
-    textopagina += " <title>Bootstrap Example</title>";
+    textopagina += " <title>Reporte AST</title>";
     textopagina += "<meta charset=\"utf-8\">";
     textopagina += " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
     textopagina += "<link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css\">";    
@@ -266,29 +290,15 @@ function Pagina_Reporte_AST(){
     textopagina += "</html>";
 
     nueva_ventana.document.write(textopagina);
-    alert(textopagina);
+    //alert(textopagina);
     
 
 }
 
+function Reporte_unos(){
 
-
-function Reporte_AST(val){
-
-
-    alert(Reporte_ASTs);
-
-    /*var jsonData = [Reporte_ASTs];
-        
-    $('#jstree-tree')
-      .on('changed.jstree', function (e, data) {
-        var objNode = data.instance.get_node(data.selected);
-        $('#jstree-result').html('Selected: <br/><strong>' + objNode.id+'-'+objNode.text+'</strong>');
-      })
-      .jstree({
-      core: {
-        data: jsonData
-      }
-    });*/
+    var nueva_ventana = window.open('../Reporte_Clases','_blank');
+    nueva_ventana.document.write(Reporte_Clases);
+    //alert(Reporte_Error)
 
 }
