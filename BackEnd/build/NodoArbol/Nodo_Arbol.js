@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Nodo_Arbol = /** @class */ (function () {
     function Nodo_Arbol(tipoC, des, idC) {
+        this.tipodato = "";
         this.lista_Nodo = [];
         this.tipo = tipoC;
         this.descripcion = des;

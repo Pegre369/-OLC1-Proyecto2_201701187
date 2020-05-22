@@ -200,6 +200,8 @@ var Reporte_ASTs="";
 
 var Reporte_Clases="";
 
+var Reporte_Metodos="";
+
 var contador_manda="uno";
 
 function Conn(){
@@ -222,7 +224,8 @@ function Conn(){
                 Reporte_Error = data.Rerror.toString();
             
                 Reporte_Clases = data.Reporte_uno.toString();
-            
+                
+                Reporte_Metodos = data.Reporte_dos.toString();
 
 
         }else{
@@ -300,5 +303,14 @@ function Reporte_unos(){
     var nueva_ventana = window.open('../Reporte_Clases','_blank');
     nueva_ventana.document.write(Reporte_Clases);
     //alert(Reporte_Error)
+
+}
+
+
+function Reporte_dos(){
+
+    var nueva_ventana = window.open('../Reporte_Funciones','_blank');
+    nueva_ventana.document.write(Reporte_Metodos);
+
 
 }

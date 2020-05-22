@@ -3,6 +3,7 @@ export class Nodo_Arbol{
     public descripcion:string;
     public tipo:string;
     public lista_Nodo:Array<Nodo_Arbol>
+    tipodato:string="";
 
     constructor(tipoC:string,des:string,idC:number){
         this.lista_Nodo = [];
