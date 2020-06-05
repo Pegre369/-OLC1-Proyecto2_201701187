@@ -209,7 +209,7 @@ function Conn(){
     
     var ta = document.getElementById(get_vent());
     var contenido = ta.value;
-    var url = "http://localhost:8080/Analizar/";
+    var url = "http://localhost:9000/Analizar/";
 
 
     $.post(url,{text1:contenido, text2:contador_manda}, function(data,status){
@@ -236,6 +236,7 @@ function Conn(){
 
     if(contador_manda.toString() == "dos"){
         
+        //console.log(Reporte_Clases.toString());
         console.log("uno");     
         contador_manda="uno";
 
@@ -299,7 +300,7 @@ function Pagina_Reporte_AST(){
 }
 
 function Reporte_unos(){
-
+    console.log(Reporte_Clases.toString());
     var nueva_ventana = window.open('../Reporte_Clases','_blank');
     nueva_ventana.document.write(Reporte_Clases);
     //alert(Reporte_Error)

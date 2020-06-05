@@ -77,6 +77,6 @@ func main() {
 	http.HandleFunc("/Reporte_Clases", Reporte_clas)
 	http.HandleFunc("/Reporte_Funciones", Reporte_funs)
 
-	fmt.Printf("Servidor escuchando en: http://localhost:8000/")
-	http.ListenAndServe(":8000", nil)
+	fmt.Printf("Servidor escuchando en: http://localhost:4000/")
+	http.ListenAndServe(":4000", nil)
 }

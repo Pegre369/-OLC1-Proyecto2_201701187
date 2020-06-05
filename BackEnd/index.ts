@@ -34,7 +34,8 @@ app.post('/Analizar/', function (req, res) {
 
         var nada = "";
         Errores.mostrar();
-        res.json({arbol: nada,Rerror: Errores.mostrar_Lista().toString()});
+        res.json({arbol: "nada", Rerror: Errores.mostrar_Lista().toString(), Reporte_uno: "nada", Reporte_dos: "nada"});
+
         Errores.clear();
 
     }else{
@@ -60,6 +61,7 @@ app.post('/Analizar/', function (req, res) {
                 //Apartado para llenar la lista de clases
                 recorrer_tree_uno(resultado);
                 Lista_clase_contadores_1.push(contador1);
+                
                 res.json({arbol: tree1, Rerror: "nada", Reporte_uno: "nada", Reporte_dos: "nada"});
 
             }else{
@@ -74,7 +76,7 @@ app.post('/Analizar/', function (req, res) {
                 //Apartado para el AST
                 var tree2 = JSON.stringify(resultado,null,2);
                 tree2 = tree2.split('descripcion').join('text').split('lista_Nodo').join('children');
-                //console.log(tree2);
+                console.log(tree2);
                 
                 //Apartado para Reportes
                 recorrer_tree_dos(resultado);
@@ -106,29 +108,39 @@ function recorrer_tree_uno(temporal:Narbol.Nodo_Arbol){
         if (temporal.lista_Nodo!=null && temporal.lista_Nodo.length>0) {
             for (let index = 0; index < temporal.lista_Nodo.length; index++) {
 
-                if(temporal.lista_Nodo[index].tipo == "Clase"){
-                
-                    Lista_clase_1.push(temporal.lista_Nodo[index].descripcion);
-
-                    if(contador1!=0){
-                        
-                        console.log("entra");
-                        Lista_clase_contadores_1.push(contador1);
-                        contador1 = 0;
+                if(temporal.lista_Nodo[index]!=null){
+                    try {
+                        if(temporal.lista_Nodo[index].tipo == "Clase"){
                     
+                            Lista_clase_1.push(temporal.lista_Nodo[index].descripcion);
+        
+                            if(contador1!=0){
+                                
+                                console.log("entra");
+                                Lista_clase_contadores_1.push(contador1);
+                                contador1 = 0;
+                            
+                            }
+                            console.log(" -> "+temporal.lista_Nodo[index].descripcion)
+        
+                        }else if(temporal.lista_Nodo[index].tipo == "Funcion" ){
+        
+                            console.log(" -> "+temporal.lista_Nodo[index].tipo)
+                            contador1 = contador1+1;
+        
+                        }else if(temporal.lista_Nodo[index].tipo == "Metodo"){
+                            console.log(" -> "+temporal.lista_Nodo[index].tipo)
+                            contador1 = contador1+1;
+        
+                        }
+                           
+                    } catch (error) {
+                        
                     }
-                    console.log(" -> "+temporal.lista_Nodo[index].descripcion)
-
-                }else if(temporal.lista_Nodo[index].tipo == "Funcion"){
-
-                    contador1 = contador1+1;
-
-                }else if(temporal.lista_Nodo[index].tipo == "Metodo"){
-
-                    contador1 = contador1+1;
-
                 }
-                   
+
+                
+
                 recorrer_tree_uno(temporal.lista_Nodo[index])
 
             }
@@ -143,29 +155,34 @@ function recorrer_tree_dos(temporal:Narbol.Nodo_Arbol){
         if (temporal.lista_Nodo!=null && temporal.lista_Nodo.length>0) {
             for (let index = 0; index < temporal.lista_Nodo.length; index++) {
 
-                if(temporal.lista_Nodo[index].tipo == "Clase"){
+                try {
+                    if(temporal.lista_Nodo[index].tipo == "Clase"){
 
-                    console.log(" -> "+temporal.lista_Nodo[index].tipo)
-                    Lista_clase_2.push(temporal.lista_Nodo[index].descripcion);
-
-                    if(contador2!=0){
-                        console.log("entra");
-                        Lista_clase_contadores_2.push(contador2);
-                        contador2 = 0;
-                    
+                        //console.log(" -> "+temporal.lista_Nodo[index].tipo)
+                        Lista_clase_2.push(temporal.lista_Nodo[index].descripcion);
+    
+                        if(contador2!=0){
+                            console.log("entra");
+                            Lista_clase_contadores_2.push(contador2);
+                            contador2 = 0;
+                        
+                        }
+                        
+                        
+    
+                    }else if(temporal.lista_Nodo[index].tipo == "Funcion"){
+    
+                        contador2 = contador2+1;
+    
+                    }else if(temporal.lista_Nodo[index].tipo == "Metodo"){
+    
+                        contador2 = contador2+1;
+    
                     }
+                } catch (error) {
                     
-                    
-
-                }else if(temporal.lista_Nodo[index].tipo == "Funcion"){
-
-                    contador2 = contador2+1;
-
-                }else if(temporal.lista_Nodo[index].tipo == "Metodo"){
-
-                    contador2 = contador2+1;
-
                 }
+
                    
                    
                 recorrer_tree_dos(temporal.lista_Nodo[index])
@@ -207,7 +224,7 @@ function Buscar_copia_clases(){
 
                 Reporte_clase+= "<tr> \n";
                 Reporte_clase+= "<th scope=\"row\">"+No+"</th> \n";
-                Reporte_clase+="<td>"+Lista_clase_2[index2]+"</td><td>"+
+                Reporte_clase+="<td>"+Lista_clase_1[index]+"</td><td>"+
                             Lista_clase_contadores_1[index]+"</td><td>"+
                             Lista_clase_contadores_2[index2]+"</td>\n";
                 Reporte_clase+="</tr>\n";
@@ -220,86 +237,93 @@ function Buscar_copia_clases(){
             }
     
         }    
-        Reporte_clase+= "</tbody> \n";
-        Reporte_clase+= "</table> \n";
-                    
-        Reporte_clase+="</body>";
-        Reporte_clase+="</html>";
-    
+   
         
     } 
+    Reporte_clase+= "</tbody> \n";
+    Reporte_clase+= "</table> \n";
+                
+    Reporte_clase+="</body>";
+    Reporte_clase+="</html>";
+
 
 }
 
 /*-----------------------------------------Reportes Copia Funciones y Variables----------------------*/
 function copiafyv(principal:Narbol.Nodo_Arbol,copia:Narbol.Nodo_Arbol){
 
-    /*Analizo primero el root principal */
-    principal.lista_Nodo.forEach(element => {
-        if (element.tipo=="Clase") {
-            MYFPrincipal = [];
-            MYFfCopia = [];
-            /*por cada calse encontrada, la busco en el otro arbol*/ 
-            copia.lista_Nodo.forEach(element2 => {
-                if (element2.tipo=="Clase") {
-                    /*Por cada clase que encuentro en el otro root compruebo si son los mismos*/ 
-                    if (element.descripcion==element2.descripcion) {
-                        /*recorro para encontrar los metodos y funciones de la clase principal*/
-                        element.lista_Nodo.forEach(element3 => {
-                            if(element3.tipo=="Funcion"){
-                                MYFPrincipal.push(element3.descripcion);
-                                /*encontramos si tiene parametros la funcion*/ 
-                                element3.lista_Nodo.forEach(parametrosMF => {
-                                    if(parametrosMF.tipo=="Parametros"){
-                                        var parametroslst = returnLst(parametrosMF.lista_Nodo);
-                                        element2.lista_Nodo.forEach(fmCopia => {
-                                            if (fmCopia.tipo=="Funcion" && element3.tipodato==fmCopia.tipodato) {
-                                                fmCopia.lista_Nodo.forEach(paramCopia => {
-                                                    if (paramCopia.tipo=="Parametros"){
-                                                        var parametroslstCopia = returnLst(paramCopia.lista_Nodo);
-                                                        if (parametroslst.toString()==parametroslstCopia.toString()) {
-                                                            console.log("las funciones "+element3.descripcion+" Son iguales en ambos archivos,por tener los mismos tipos de parametros en el mismo orden"+" de la calse "+element.descripcion);
-                                                            MYFfCopia_Clase.push(element.descripcion);
-                                                            MYFfCopia.push(element3.descripcion);
+    try {
+        /*Analizo primero el root principal */
+        principal.lista_Nodo.forEach(element => {
+            if (element.tipo=="Clase") {
+                MYFPrincipal = [];
+                MYFfCopia = [];
+                /*por cada calse encontrada, la busco en el otro arbol*/ 
+                copia.lista_Nodo.forEach(element2 => {
+                    if (element2.tipo=="Clase") {
+                        /*Por cada clase que encuentro en el otro root compruebo si son los mismos*/ 
+                        if (element.descripcion==element2.descripcion) {
+                            /*recorro para encontrar los metodos y funciones de la clase principal*/
+                            element.lista_Nodo.forEach(element3 => {
+                                if(element3.tipo=="Funcion"){
+                                    MYFPrincipal.push(element3.descripcion);
+                                    /*encontramos si tiene parametros la funcion*/ 
+                                    element3.lista_Nodo.forEach(parametrosMF => {
+                                        if(parametrosMF.tipo=="Parametros"){
+                                            var parametroslst = returnLst(parametrosMF.lista_Nodo);
+                                            element2.lista_Nodo.forEach(fmCopia => {
+                                                if (fmCopia.tipo=="Funcion" && element3.tipodato==fmCopia.tipodato) {
+                                                    fmCopia.lista_Nodo.forEach(paramCopia => {
+                                                        if (paramCopia.tipo=="Parametros"){
+                                                            var parametroslstCopia = returnLst(paramCopia.lista_Nodo);
+                                                            if (parametroslst.toString()==parametroslstCopia.toString()) {
+                                                                console.log("las funciones "+element3.descripcion+" Son iguales en ambos archivos,por tener los mismos tipos de parametros en el mismo orden"+" de la calse "+element.descripcion);
+                                                                MYFfCopia_Clase.push(element.descripcion);
+                                                                MYFfCopia.push(element3.descripcion);
+                                                            }
                                                         }
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }else if(element3.tipo=="Metodo"){
-                                MYFPrincipal.push(element3.descripcion);
-                                /*encontramos si tiene parametros la funcion*/ 
-                                element3.lista_Nodo.forEach(parametrosF => {
-                                    if(parametrosF.tipo=="Parametros"){
-                                        var parametroslstM = returnLst(parametrosF.lista_Nodo);
-                                        element2.lista_Nodo.forEach(mCopia => {
-                                            if (mCopia.tipo=="Metodo" && element3.descripcion==mCopia.descripcion) {
-                                                mCopia.lista_Nodo.forEach(paramCopiaM => {
-                                                    if (paramCopiaM.tipo=="Parametros"){
-                                                        var parametroslstCopiaM = returnLst(paramCopiaM.lista_Nodo);
-                                                        if (parametroslstM.toString()==parametroslstCopiaM.toString()) {
-                                                            console.log("los metodos "+element3.descripcion+" Son iguales en ambos archivos,por tener los mismos tipos de parametros en el mismo orden"+" de la calse "+element.descripcion);
-                                                            MYFfCopia.push(element3.descripcion);
-                                                            MYFfCopia.push(element3.descripcion);
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }else if(element3.tipo=="Metodo"){
+                                    MYFPrincipal.push(element3.descripcion);
+                                    /*encontramos si tiene parametros la funcion*/ 
+                                    element3.lista_Nodo.forEach(parametrosF => {
+                                        if(parametrosF.tipo=="Parametros"){
+                                            var parametroslstM = returnLst(parametrosF.lista_Nodo);
+                                            element2.lista_Nodo.forEach(mCopia => {
+                                                if (mCopia.tipo=="Metodo" && element3.descripcion==mCopia.descripcion) {
+                                                    mCopia.lista_Nodo.forEach(paramCopiaM => {
+                                                        if (paramCopiaM.tipo=="Parametros"){
+                                                            var parametroslstCopiaM = returnLst(paramCopiaM.lista_Nodo);
+                                                            if (parametroslstM.toString()==parametroslstCopiaM.toString()) {
+                                                                console.log("los metodos "+element3.descripcion+" Son iguales en ambos archivos,por tener los mismos tipos de parametros en el mismo orden"+" de la calse "+element.descripcion);
+                                                                MYFfCopia.push(element3.descripcion);
+                                                                MYFfCopia.push(element3.descripcion);
+                                                            }
                                                         }
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                            if(MYFPrincipal.toString()==MYFfCopia.toString()){
+                                console.log("las clases "+element.descripcion+" Son iguales en ambos archivos");
                             }
-                        });
-                        if(MYFPrincipal.toString()==MYFfCopia.toString()){
-                            console.log("las clases "+element.descripcion+" Son iguales en ambos archivos");
                         }
                     }
-                }
-            });
-        }
-    });
+                });
+            }
+        });
+    } catch (error) {
+        
+    }
+    
+    
 }
 
 function rec(){
@@ -359,8 +383,8 @@ function returnLst(lstLista:Array<Narbol.Nodo_Arbol>):Array<String>{
     return temporalLst;
 }
 
-var server = app.listen(8080, function () {
-    console.log('Servidor escuchando en puerto 8080...');
+var server = app.listen(9000, function () {
+    console.log('Servidor escuchando en puerto 9000...');
 });
 
 function prueba(texto:string){
